@@ -70,8 +70,6 @@ button {
     background: #e5e5e5;
     color: #777;
     position: absolute;
-    left: 50%;
-    transform: translateX(-50%); /* wyśrodkowanie pod "Tak" */
 }
 
 .yay {
@@ -102,22 +100,24 @@ var yesBtn = document.getElementById("yesBtn");
 var area = document.getElementById("area");
 var content = document.getElementById("content");
 
-const MARGIN = 10; // minimalny odstęp od przycisku "Tak"
+const MARGIN = 10; // minimalny odstęp od "Tak"
 
-/* USTAWIENIE POCZĄTKOWE "NIE" POD "TAK" */
+/* USTAWIENIE POCZĄTKOWE "NIE" POD "TAK" WYŚRODKOWANE */
 function initNoPosition() {
     const yesRect = yesBtn.getBoundingClientRect();
     const areaRect = area.getBoundingClientRect();
 
-    // pozycja "Nie" pod "Tak" + 10 px odstępu
-    let x = (areaRect.width - noBtn.offsetWidth) / 2; // wyśrodkowanie
+    // x: tak, żeby "Nie" był wyśrodkowany względem "Tak"
+    let x = yesBtn.offsetLeft + (yesBtn.offsetWidth - noBtn.offsetWidth) / 2;
+
+    // y: pod "Tak" z odstępem min. 10px
     let y = yesBtn.offsetTop + yesBtn.offsetHeight + MARGIN;
 
     noBtn.style.left = x + "px";
     noBtn.style.top = y + "px";
 }
 
-/* UCIEKANIE "NIE" po dotknięciu / najechaniu */
+/* UCIEKANIE "NIE" PO DOTKNIĘCIU / NAJECHANIU */
 function moveNo() {
     const areaRect = area.getBoundingClientRect();
     const yesRect = yesBtn.getBoundingClientRect();
@@ -125,18 +125,18 @@ function moveNo() {
     let x, y, safe = false;
 
     while (!safe) {
-        x = Math.random() * (areaRect.width - noBtn.offsetWidth);
-        y = Math.random() * (areaRect.height - noBtn.offsetHeight);
+        x = Math.random() * (area.offsetWidth - noBtn.offsetWidth);
+        y = Math.random() * (area.offsetHeight - noBtn.offsetHeight);
 
-        const noLeft = areaRect.left + x;
+        const noLeft = area.offsetLeft + x;
         const noRight = noLeft + noBtn.offsetWidth;
-        const noTop = areaRect.top + y;
+        const noTop = area.offsetTop + y;
         const noBottom = noTop + noBtn.offsetHeight;
 
-        const yesLeft = yesRect.left - MARGIN;
-        const yesRight = yesRect.right + MARGIN;
-        const yesTop = yesRect.top - MARGIN;
-        const yesBottom = yesRect.bottom + MARGIN;
+        const yesLeft = yesBtn.offsetLeft - MARGIN;
+        const yesRight = yesBtn.offsetLeft + yesBtn.offsetWidth + MARGIN;
+        const yesTop = yesBtn.offsetTop - MARGIN;
+        const yesBottom = yesBtn.offsetTop + yesBtn.offsetHeight + MARGIN;
 
         safe = (noRight < yesLeft || noLeft > yesRight || noBottom < yesTop || noTop > yesBottom);
     }
@@ -145,7 +145,7 @@ function moveNo() {
     noBtn.style.top = y + "px";
 }
 
-/* Eventy uniwersalne: desktop + touch */
+/* EVENTY UNIWERSALNE: DESKTOP + TOUCH */
 noBtn.addEventListener("mousemove", moveNo);
 noBtn.addEventListener("touchstart", moveNo);
 
