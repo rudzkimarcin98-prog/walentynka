@@ -41,12 +41,19 @@ h1 {
     font-size: 1.6rem;
     font-weight: 600;
     color: #8b1e3f;
-    margin-bottom: 40px;
+    margin-bottom: 14px;
+}
+
+.hint {
+    font-size: 0.9rem;
+    color: #b45a78;
+    margin-bottom: 28px;
+    opacity: 0.85;
 }
 
 .buttons {
     position: relative;
-    height: 130px;
+    height: 160px;
 }
 
 button {
@@ -64,6 +71,8 @@ button:active {
 }
 
 .yes {
+    position: relative;
+    z-index: 2;
     background: #8b1e3f;
     color: white;
     box-shadow: 0 12px 24px rgba(139, 30, 63, 0.45);
@@ -72,13 +81,13 @@ button:active {
 .no {
     position: absolute;
     top: 0;
-    left: 55%;
+    left: 60%;
     background: #e5e5e5;
     color: #777;
 }
 
 .heart {
-    margin-top: 28px;
+    margin-top: 30px;
     font-size: 42px;
 }
 
@@ -114,11 +123,12 @@ button:active {
 
 <body>
 
-<div class="card" id="mainCard">
+<div class="card">
     <h1>Kaja, czy zostaniesz moją walentynką?</h1>
+    <div class="hint">Spróbuj najpierw kliknąć „Nie” 😇</div>
 
-    <div class="buttons">
-        <button class="yes" onclick="yesClick()">Tak 💖</button>
+    <div class="buttons" id="buttonsArea">
+        <button class="yes" id="yesBtn" onclick="yesClick()">Tak 💖</button>
         <button class="no" id="noBtn">Nie</button>
     </div>
 
@@ -127,20 +137,45 @@ button:active {
 
 <script>
 const noBtn = document.getElementById("noBtn");
-
-noBtn.addEventListener("touchstart", moveNo);
-noBtn.addEventListener("mouseover", moveNo);
+const yesBtn = document.getElementById("yesBtn");
+const buttonsArea = document.getElementById("buttonsArea");
 
 function moveNo() {
-    const maxX = 180;
-    const maxY = 90;
+    const area = buttonsArea.getBoundingClientRect();
+    const yes = yesBtn.getBoundingClientRect();
 
-    const x = Math.random() * maxX;
-    const y = Math.random() * maxY;
+    let x, y, safe = false;
+
+    while (!safe) {
+        x = Math.random() * (area.width - 120);
+        y = Math.random() * (area.height - 44);
+
+        const noRect = {
+            left: area.left + x,
+            right: area.left + x + 120,
+            top: area.top + y,
+            bottom: area.top + y + 44
+        };
+
+        // strefa bezpieczeństwa wokół "Tak"
+        safe =
+            noRect.right < yes.left - 12 ||
+            noRect.left > yes.right + 12 ||
+            noRect.bottom < yes.top - 12 ||
+            noRect.top > yes.bottom + 12;
+    }
 
     noBtn.style.left = x + "px";
     noBtn.style.top = y + "px";
 }
+
+noBtn.addEventListener("touchstart", moveNo);
+noBtn.addEventListener("mouseover", moveNo);
+
+// subtelne poruszenie "Nie" na start
+setTimeout(() => {
+    moveNo();
+}, 1200);
 
 function yesClick() {
     if (navigator.vibrate) {
