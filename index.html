@@ -2,14 +2,12 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Walentynka 💖</title>
 
 <style>
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
     margin: 0;
@@ -17,21 +15,34 @@ body {
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     background: linear-gradient(135deg, #f8cdda, #f1a7c0);
     display: flex;
-    align-items: center;
     justify-content: center;
-    overflow: hidden;
+    align-items: center;
 }
 
 .card {
-    background: #fff;
-    padding: 40px 30px;
-    border-radius: 26px;
+    position: relative;
     width: 90%;
     max-width: 420px;
-    text-align: center;
+    padding: 40px 30px;
+    border-radius: 28px;
+    background: #fff;
     box-shadow: 0 20px 45px rgba(0,0,0,0.18);
+    overflow: hidden;
+}
+
+/* WARSTWA TŁA NA SERCA */
+.confetti-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* TREŚĆ NAD TŁEM */
+.content {
     position: relative;
     z-index: 2;
+    text-align: center;
 }
 
 h1 {
@@ -75,25 +86,26 @@ button {
     top: 0;
 }
 
-.heart {
-    margin-top: 25px;
-    font-size: 40px;
-}
-
-/* konfetti */
+/* SERCA */
 .confetti {
-    position: fixed;
-    top: -20px;
-    font-size: 24px;
+    position: absolute;
+    top: -30px;
+    font-size: 22px;
     animation: fall linear forwards;
-    pointer-events: none;
+    opacity: 0.9;
 }
 
 @keyframes fall {
     to {
-        transform: translateY(110vh) rotate(360deg);
+        transform: translateY(120%);
         opacity: 0;
     }
+}
+
+.yay {
+    font-size: 1.8rem;
+    margin-top: 20px;
+    color: #8b1e3f;
 }
 </style>
 </head>
@@ -101,28 +113,31 @@ button {
 <body>
 
 <div class="card" id="card">
-    <h1>Kaja, czy zostaniesz moją walentynką?</h1>
-    <div class="hint">Spróbuj najpierw kliknąć „Nie” 😇</div>
 
-    <div class="buttons" id="area">
-        <button class="yes" id="yesBtn">Tak 💖</button>
-        <button class="no" id="noBtn">Nie</button>
+    <div class="confetti-layer" id="confettiLayer"></div>
+
+    <div class="content" id="content">
+        <h1>Kaja, czy zostaniesz moją walentynką?</h1>
+        <div class="hint">Spróbuj kliknąć „Nie” 😇</div>
+
+        <div class="buttons" id="area">
+            <button class="yes" id="yesBtn">Tak 💖</button>
+            <button class="no" id="noBtn">Nie</button>
+        </div>
     </div>
 
-    <div class="heart">💘</div>
 </div>
 
 <script>
 var noBtn = document.getElementById("noBtn");
 var yesBtn = document.getElementById("yesBtn");
 var area = document.getElementById("area");
-
-var speed = 1;
+var layer = document.getElementById("confettiLayer");
+var content = document.getElementById("content");
 
 function moveNo() {
     var areaRect = area.getBoundingClientRect();
     var yesRect = yesBtn.getBoundingClientRect();
-
     var x, y, safe = false;
 
     while (!safe) {
@@ -145,53 +160,37 @@ function moveNo() {
 
     noBtn.style.left = x + "px";
     noBtn.style.top = y + "px";
-
-    speed++;
 }
 
-/* DZIAŁA WSZĘDZIE */
 noBtn.addEventListener("mouseenter", moveNo);
-area.addEventListener("mousemove", function(e) {
-    var rect = noBtn.getBoundingClientRect();
-    var dx = e.clientX - (rect.left + rect.width / 2);
-    var dy = e.clientY - (rect.top + rect.height / 2);
-    var dist = Math.sqrt(dx * dx + dy * dy);
 
-    if (dist < 60) {
-        moveNo();
-    }
+yesBtn.addEventListener("click", function () {
+
+    content.innerHTML = `
+        <h1 class="yay">Yay! Wiedziałem 😘</h1>
+        <div style="font-size:50px;">💖💖💖</div>
+    `;
+
+    startConfetti();
 });
 
-yesBtn.addEventListener("click", function() {
-    for (var i = 0; i < 40; i++) {
-        createConfetti();
+function startConfetti() {
+    for (let i = 0; i < 120; i++) {
+        setTimeout(createConfetti, i * 40);
     }
-
-    setTimeout(function() {
-        document.body.innerHTML = `
-            <div class="card">
-                <h1>Yay! 💕</h1>
-                <p style="font-size:1.2rem;">Wiedziałem 😘</p>
-                <div style="font-size:52px;">💖💖💖</div>
-            </div>
-        `;
-    }, 800);
-});
+}
 
 function createConfetti() {
-    var c = document.createElement("div");
-    c.className = "confetti";
-    c.textContent = Math.random() > 0.5 ? "💖" : "💕";
-    c.style.left = Math.random() * 100 + "vw";
-    c.style.animationDuration = (2 + Math.random() * 2) + "s";
-    document.body.appendChild(c);
+    var el = document.createElement("div");
+    el.className = "confetti";
+    el.textContent = Math.random() > 0.5 ? "💖" : "💕";
+    el.style.left = Math.random() * 100 + "%";
+    el.style.animationDuration = (2.5 + Math.random() * 2) + "s";
+    layer.appendChild(el);
 
-    setTimeout(function() {
-        c.remove();
-    }, 4000);
+    setTimeout(() => el.remove(), 5000);
 }
 
-/* małe poruszenie na start */
 setTimeout(moveNo, 1200);
 </script>
 
