@@ -100,8 +100,9 @@ var yesBtn = document.getElementById("yesBtn");
 var area = document.getElementById("area");
 var content = document.getElementById("content");
 
-const MARGIN = 10; // odstęp min. 10px
+const MARGIN = 10; // min. odstęp od przycisku "Tak"
 
+/* FUNKCJA PRZEMIESZCZENIA "NIE" */
 function moveNo() {
     const areaRect = area.getBoundingClientRect();
     const yesRect = yesBtn.getBoundingClientRect();
@@ -109,7 +110,6 @@ function moveNo() {
     let x, y, safe = false;
 
     while (!safe) {
-        // losowa pozycja w obrębie area
         x = Math.random() * (areaRect.width - noBtn.offsetWidth);
         y = Math.random() * (areaRect.height - noBtn.offsetHeight);
 
@@ -123,7 +123,6 @@ function moveNo() {
         const yesTop = yesRect.top - MARGIN;
         const yesBottom = yesRect.bottom + MARGIN;
 
-        // sprawdzenie czy „Nie” nachodzi na „Tak”
         safe = (noRight < yesLeft || noLeft > yesRight || noBottom < yesTop || noTop > yesBottom);
     }
 
@@ -131,8 +130,9 @@ function moveNo() {
     noBtn.style.top = y + "px";
 }
 
-noBtn.addEventListener("mouseenter", moveNo);
-setTimeout(moveNo, 1200);
+/* DODANIE UNIWERSALNYCH EVENTÓW */
+noBtn.addEventListener("mousemove", moveNo);  // desktop
+noBtn.addEventListener("touchstart", moveNo); // telefon / tablet
 
 /* KLIKNIĘCIE "TAK" */
 yesBtn.addEventListener("click", function () {
