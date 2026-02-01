@@ -63,14 +63,13 @@ button {
 .yes {
     background: #8b1e3f;
     color: white;
+    position: relative;
 }
 
 .no {
     background: #e5e5e5;
     color: #777;
     position: absolute;
-    left: 60%;
-    top: 0;
 }
 
 .yay {
@@ -101,14 +100,37 @@ var yesBtn = document.getElementById("yesBtn");
 var area = document.getElementById("area");
 var content = document.getElementById("content");
 
-/* UCIEKAJĄCE "NIE" */
+const MARGIN = 10; // odstęp min. 10px
+
 function moveNo() {
-    var areaRect = area.getBoundingClientRect();
-    var x = Math.random() * (areaRect.width - 120);
-    var y = Math.random() * (areaRect.height - 44);
+    const areaRect = area.getBoundingClientRect();
+    const yesRect = yesBtn.getBoundingClientRect();
+
+    let x, y, safe = false;
+
+    while (!safe) {
+        // losowa pozycja w obrębie area
+        x = Math.random() * (areaRect.width - noBtn.offsetWidth);
+        y = Math.random() * (areaRect.height - noBtn.offsetHeight);
+
+        const noLeft = areaRect.left + x;
+        const noRight = noLeft + noBtn.offsetWidth;
+        const noTop = areaRect.top + y;
+        const noBottom = noTop + noBtn.offsetHeight;
+
+        const yesLeft = yesRect.left - MARGIN;
+        const yesRight = yesRect.right + MARGIN;
+        const yesTop = yesRect.top - MARGIN;
+        const yesBottom = yesRect.bottom + MARGIN;
+
+        // sprawdzenie czy „Nie” nachodzi na „Tak”
+        safe = (noRight < yesLeft || noLeft > yesRight || noBottom < yesTop || noTop > yesBottom);
+    }
+
     noBtn.style.left = x + "px";
     noBtn.style.top = y + "px";
 }
+
 noBtn.addEventListener("mouseenter", moveNo);
 setTimeout(moveNo, 1200);
 
