@@ -30,7 +30,7 @@ body {
     overflow: hidden;
 }
 
-/* WARSTWA TŁA NA SERCA */
+/* WARSTWA TŁA */
 .confetti-layer {
     position: absolute;
     inset: 0;
@@ -38,7 +38,7 @@ body {
     pointer-events: none;
 }
 
-/* TREŚĆ NAD TŁEM */
+/* TREŚĆ */
 .content {
     position: relative;
     z-index: 2;
@@ -74,8 +74,6 @@ button {
 .yes {
     background: #8b1e3f;
     color: white;
-    position: relative;
-    z-index: 3;
 }
 
 .no {
@@ -86,25 +84,29 @@ button {
     top: 0;
 }
 
-/* SERCA */
+/* SERCA / KONFETTI */
 .confetti {
     position: absolute;
-    top: -30px;
+    top: -40px;
     font-size: 22px;
-    animation: fall linear forwards;
-    opacity: 0.9;
+    animation-name: fall;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+    opacity: 0.95;
 }
 
 @keyframes fall {
+    from {
+        transform: translateY(-10%);
+    }
     to {
-        transform: translateY(120%);
-        opacity: 0;
+        transform: translateY(140%);
     }
 }
 
 .yay {
-    font-size: 1.8rem;
-    margin-top: 20px;
+    font-size: 1.9rem;
+    margin-top: 25px;
     color: #8b1e3f;
 }
 </style>
@@ -112,8 +114,7 @@ button {
 
 <body>
 
-<div class="card" id="card">
-
+<div class="card">
     <div class="confetti-layer" id="confettiLayer"></div>
 
     <div class="content" id="content">
@@ -125,7 +126,6 @@ button {
             <button class="no" id="noBtn">Nie</button>
         </div>
     </div>
-
 </div>
 
 <script>
@@ -135,63 +135,48 @@ var area = document.getElementById("area");
 var layer = document.getElementById("confettiLayer");
 var content = document.getElementById("content");
 
+/* UCIEKAJĄCE "NIE" */
 function moveNo() {
     var areaRect = area.getBoundingClientRect();
-    var yesRect = yesBtn.getBoundingClientRect();
-    var x, y, safe = false;
-
-    while (!safe) {
-        x = Math.random() * (areaRect.width - 120);
-        y = Math.random() * (areaRect.height - 44);
-
-        var noRect = {
-            left: areaRect.left + x,
-            right: areaRect.left + x + 120,
-            top: areaRect.top + y,
-            bottom: areaRect.top + y + 44
-        };
-
-        safe =
-            noRect.right < yesRect.left - 12 ||
-            noRect.left > yesRect.right + 12 ||
-            noRect.bottom < yesRect.top - 12 ||
-            noRect.top > yesRect.bottom + 12;
-    }
-
+    var x = Math.random() * (areaRect.width - 120);
+    var y = Math.random() * (areaRect.height - 44);
     noBtn.style.left = x + "px";
     noBtn.style.top = y + "px";
 }
-
 noBtn.addEventListener("mouseenter", moveNo);
+setTimeout(moveNo, 1200);
 
+/* KLIKNIĘCIE "TAK" */
 yesBtn.addEventListener("click", function () {
-
     content.innerHTML = `
-        <h1 class="yay">Yay! Wiedziałem 😘</h1>
-        <div style="font-size:50px;">💖💖💖</div>
+        <h1 class="yay">Wiedziałem 😎</h1>
+        <div style="font-size:52px;">💖💖💖</div>
     `;
-
     startConfetti();
 });
 
+/* START ANIMACJI */
 function startConfetti() {
-    for (let i = 0; i < 120; i++) {
-        setTimeout(createConfetti, i * 40);
+    for (let i = 0; i < 160; i++) {
+        setTimeout(createConfetti, i * 25);
     }
 }
 
+/* POJEDYNCZE SERCE */
 function createConfetti() {
     var el = document.createElement("div");
     el.className = "confetti";
     el.textContent = Math.random() > 0.5 ? "💖" : "💕";
+
     el.style.left = Math.random() * 100 + "%";
-    el.style.animationDuration = (2.5 + Math.random() * 2) + "s";
+
+    /* 100% SZYBCIEJ, ALE DŁUGA WIDOCZNOŚĆ */
+    el.style.animationDuration = (5 + Math.random() * 2) + "s";
+
     layer.appendChild(el);
 
-    setTimeout(() => el.remove(), 5000);
+    setTimeout(() => el.remove(), 8000);
 }
-
-setTimeout(moveNo, 1200);
 </script>
 
 </body>
