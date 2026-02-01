@@ -70,6 +70,8 @@ button {
     background: #e5e5e5;
     color: #777;
     position: absolute;
+    left: 50%;
+    transform: translateX(-50%); /* wyśrodkowanie pod "Tak" */
 }
 
 .yay {
@@ -100,9 +102,22 @@ var yesBtn = document.getElementById("yesBtn");
 var area = document.getElementById("area");
 var content = document.getElementById("content");
 
-const MARGIN = 10; // min. odstęp od przycisku "Tak"
+const MARGIN = 10; // minimalny odstęp od przycisku "Tak"
 
-/* FUNKCJA PRZEMIESZCZENIA "NIE" */
+/* USTAWIENIE POCZĄTKOWE "NIE" POD "TAK" */
+function initNoPosition() {
+    const yesRect = yesBtn.getBoundingClientRect();
+    const areaRect = area.getBoundingClientRect();
+
+    // pozycja "Nie" pod "Tak" + 10 px odstępu
+    let x = (areaRect.width - noBtn.offsetWidth) / 2; // wyśrodkowanie
+    let y = yesBtn.offsetTop + yesBtn.offsetHeight + MARGIN;
+
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+}
+
+/* UCIEKANIE "NIE" po dotknięciu / najechaniu */
 function moveNo() {
     const areaRect = area.getBoundingClientRect();
     const yesRect = yesBtn.getBoundingClientRect();
@@ -130,9 +145,9 @@ function moveNo() {
     noBtn.style.top = y + "px";
 }
 
-/* DODANIE UNIWERSALNYCH EVENTÓW */
-noBtn.addEventListener("mousemove", moveNo);  // desktop
-noBtn.addEventListener("touchstart", moveNo); // telefon / tablet
+/* Eventy uniwersalne: desktop + touch */
+noBtn.addEventListener("mousemove", moveNo);
+noBtn.addEventListener("touchstart", moveNo);
 
 /* KLIKNIĘCIE "TAK" */
 yesBtn.addEventListener("click", function () {
@@ -141,6 +156,9 @@ yesBtn.addEventListener("click", function () {
         <div style="font-size:52px;">💖💖💖</div>
     `;
 });
+
+// ustaw pozycję "Nie" na starcie
+window.addEventListener("load", initNoPosition);
 </script>
 
 </body>
