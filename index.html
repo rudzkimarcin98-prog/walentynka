@@ -30,18 +30,7 @@ body {
     overflow: hidden;
 }
 
-/* WARSTWA TŁA */
-.confetti-layer {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-}
-
-/* TREŚĆ */
 .content {
-    position: relative;
-    z-index: 2;
     text-align: center;
 }
 
@@ -84,26 +73,6 @@ button {
     top: 0;
 }
 
-/* SERCA / KONFETTI */
-.confetti {
-    position: absolute;
-    top: -40px;
-    font-size: 22px;
-    animation-name: fall;
-    animation-timing-function: linear;
-    animation-fill-mode: forwards;
-    opacity: 0.95;
-}
-
-@keyframes fall {
-    from {
-        transform: translateY(-10%);
-    }
-    to {
-        transform: translateY(140%);
-    }
-}
-
 .yay {
     font-size: 1.9rem;
     margin-top: 25px;
@@ -115,8 +84,6 @@ button {
 <body>
 
 <div class="card">
-    <div class="confetti-layer" id="confettiLayer"></div>
-
     <div class="content" id="content">
         <h1>Kaja, czy zostaniesz moją walentynką?</h1>
         <div class="hint">Spróbuj kliknąć „Nie” 😇</div>
@@ -132,7 +99,6 @@ button {
 var noBtn = document.getElementById("noBtn");
 var yesBtn = document.getElementById("yesBtn");
 var area = document.getElementById("area");
-var layer = document.getElementById("confettiLayer");
 var content = document.getElementById("content");
 
 /* UCIEKAJĄCE "NIE" */
@@ -152,31 +118,7 @@ yesBtn.addEventListener("click", function () {
         <h1 class="yay">Wiedziałem 😎</h1>
         <div style="font-size:52px;">💖💖💖</div>
     `;
-    startConfetti();
 });
-
-/* START ANIMACJI */
-function startConfetti() {
-    for (let i = 0; i < 160; i++) {
-        setTimeout(createConfetti, i * 25);
-    }
-}
-
-/* POJEDYNCZE SERCE */
-function createConfetti() {
-    var el = document.createElement("div");
-    el.className = "confetti";
-    el.textContent = Math.random() > 0.5 ? "💖" : "💕";
-
-    el.style.left = Math.random() * 100 + "%";
-
-    /* 100% SZYBCIEJ, ALE DŁUGA WIDOCZNOŚĆ */
-    el.style.animationDuration = (5 + Math.random() * 2) + "s";
-
-    layer.appendChild(el);
-
-    setTimeout(() => el.remove(), 8000);
-}
 </script>
 
 </body>
