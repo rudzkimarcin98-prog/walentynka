@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+
+<title>Walentynka 💖</title>
+
+<!-- iOS web-app -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Walentynka 💘">
+
+<style>
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #f8cdda, #f1a7c0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card {
+    background: #ffffff;
+    padding: 42px 32px;
+    border-radius: 28px;
+    width: 90%;
+    max-width: 420px;
+    text-align: center;
+    box-shadow: 0 24px 50px rgba(0,0,0,0.18);
+}
+
+h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #8b1e3f;
+    margin-bottom: 40px;
+}
+
+.buttons {
+    position: relative;
+    height: 130px;
+}
+
+button {
+    border: none;
+    border-radius: 999px;
+    padding: 14px 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+.yes {
+    background: #8b1e3f;
+    color: white;
+    box-shadow: 0 12px 24px rgba(139, 30, 63, 0.45);
+}
+
+.no {
+    position: absolute;
+    top: 0;
+    left: 55%;
+    background: #e5e5e5;
+    color: #777;
+}
+
+.heart {
+    margin-top: 28px;
+    font-size: 42px;
+}
+
+.fullscreen-love {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #f8cdda, #f1a7c0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.love-card {
+    background: white;
+    padding: 50px;
+    border-radius: 28px;
+    text-align: center;
+    box-shadow: 0 24px 50px rgba(0,0,0,0.18);
+}
+
+.love-card h2 {
+    color: #8b1e3f;
+    font-size: 2.2rem;
+    margin-bottom: 12px;
+}
+
+.love-card p {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card" id="mainCard">
+    <h1>Kaja, czy zostaniesz moją walentynką?</h1>
+
+    <div class="buttons">
+        <button class="yes" onclick="yesClick()">Tak 💖</button>
+        <button class="no" id="noBtn">Nie</button>
+    </div>
+
+    <div class="heart">💘</div>
+</div>
+
+<script>
+const noBtn = document.getElementById("noBtn");
+
+noBtn.addEventListener("touchstart", moveNo);
+noBtn.addEventListener("mouseover", moveNo);
+
+function moveNo() {
+    const maxX = 180;
+    const maxY = 90;
+
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
+
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+}
+
+function yesClick() {
+    if (navigator.vibrate) {
+        navigator.vibrate(80);
+    }
+
+    document.body.innerHTML = `
+        <div class="fullscreen-love">
+            <div class="love-card">
+                <h2>Yay! 💕</h2>
+                <p>Wiedziałem 😘</p>
+                <div style="font-size:52px;">💖💖💖</div>
+            </div>
+        </div>
+    `;
+}
+</script>
+
+</body>
+</html>
