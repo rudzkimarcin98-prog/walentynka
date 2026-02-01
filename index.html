@@ -95,62 +95,51 @@ button {
 </div>
 
 <script>
-var noBtn = document.getElementById("noBtn");
-var yesBtn = document.getElementById("yesBtn");
-var area = document.getElementById("area");
-var content = document.getElementById("content");
-
-const MARGIN = 10; // minimalny odstęp od "Tak"
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+const area = document.getElementById("area");
+const content = document.getElementById("content");
+const MARGIN = 10; // minimalny odstęp od przycisku "Tak"
 
 /* USTAWIENIE POCZĄTKOWE "NIE" POD "TAK" WYŚRODKOWANE */
 function initNoPosition() {
-    const yesRect = yesBtn.getBoundingClientRect();
-    const areaRect = area.getBoundingClientRect();
-
-    // x: tak, żeby "Nie" był wyśrodkowany względem "Tak"
-    let x = yesBtn.offsetLeft + (yesBtn.offsetWidth - noBtn.offsetWidth) / 2;
-
-    // y: pod "Tak" z odstępem min. 10px
-    let y = yesBtn.offsetTop + yesBtn.offsetHeight + MARGIN;
-
+    const x = yesBtn.offsetLeft + (yesBtn.offsetWidth - noBtn.offsetWidth)/2;
+    const y = yesBtn.offsetTop + yesBtn.offsetHeight + MARGIN;
     noBtn.style.left = x + "px";
     noBtn.style.top = y + "px";
 }
 
-/* UCIEKANIE "NIE" PO DOTKNIĘCIU / NAJECHANIU */
+/* UCIEKANIE "NIE" */
 function moveNo() {
-    const areaRect = area.getBoundingClientRect();
-    const yesRect = yesBtn.getBoundingClientRect();
+    const areaWidth = area.offsetWidth;
+    const areaHeight = area.offsetHeight;
+
+    const yesLeft = yesBtn.offsetLeft - MARGIN;
+    const yesRight = yesBtn.offsetLeft + yesBtn.offsetWidth + MARGIN;
+    const yesTop = yesBtn.offsetTop - MARGIN;
+    const yesBottom = yesBtn.offsetTop + yesBtn.offsetHeight + MARGIN;
 
     let x, y, safe = false;
 
-    while (!safe) {
-        x = Math.random() * (area.offsetWidth - noBtn.offsetWidth);
-        y = Math.random() * (area.offsetHeight - noBtn.offsetHeight);
+    while(!safe) {
+        x = Math.random() * (areaWidth - noBtn.offsetWidth);
+        y = Math.random() * (areaHeight - noBtn.offsetHeight);
 
-        const noLeft = area.offsetLeft + x;
-        const noRight = noLeft + noBtn.offsetWidth;
-        const noTop = area.offsetTop + y;
-        const noBottom = noTop + noBtn.offsetHeight;
-
-        const yesLeft = yesBtn.offsetLeft - MARGIN;
-        const yesRight = yesBtn.offsetLeft + yesBtn.offsetWidth + MARGIN;
-        const yesTop = yesBtn.offsetTop - MARGIN;
-        const yesBottom = yesBtn.offsetTop + yesBtn.offsetHeight + MARGIN;
-
-        safe = (noRight < yesLeft || noLeft > yesRight || noBottom < yesTop || noTop > yesBottom);
+        // sprawdzenie kolizji z "Tak"
+        safe = (x + noBtn.offsetWidth < yesLeft || x > yesRight ||
+                y + noBtn.offsetHeight < yesTop || y > yesBottom);
     }
 
     noBtn.style.left = x + "px";
     noBtn.style.top = y + "px";
 }
 
-/* EVENTY UNIWERSALNE: DESKTOP + TOUCH */
+/* EVENTY DESKTOP + TOUCH */
 noBtn.addEventListener("mousemove", moveNo);
 noBtn.addEventListener("touchstart", moveNo);
 
 /* KLIKNIĘCIE "TAK" */
-yesBtn.addEventListener("click", function () {
+yesBtn.addEventListener("click", () => {
     content.innerHTML = `
         <h1 class="yay">Wiedziałem 😎</h1>
         <div style="font-size:52px;">💖💖💖</div>
