@@ -6,7 +6,6 @@
 
 <title>Walentynka 💖</title>
 
-<!-- iOS web-app -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Walentynka 💘">
@@ -25,6 +24,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
 }
 
 .card {
@@ -35,6 +35,7 @@ body {
     max-width: 420px;
     text-align: center;
     box-shadow: 0 24px 50px rgba(0,0,0,0.18);
+    z-index: 2;
 }
 
 h1 {
@@ -63,7 +64,7 @@ button {
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    transition: transform 0.15s ease;
 }
 
 button:active {
@@ -91,39 +92,27 @@ button:active {
     font-size: 42px;
 }
 
-.fullscreen-love {
+/* 🎉 konfetti */
+.confetti {
     position: fixed;
-    inset: 0;
-    background: linear-gradient(135deg, #f8cdda, #f1a7c0);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    top: -20px;
+    font-size: 24px;
+    animation: fall linear forwards;
+    pointer-events: none;
 }
 
-.love-card {
-    background: white;
-    padding: 50px;
-    border-radius: 28px;
-    text-align: center;
-    box-shadow: 0 24px 50px rgba(0,0,0,0.18);
-}
-
-.love-card h2 {
-    color: #8b1e3f;
-    font-size: 2.2rem;
-    margin-bottom: 12px;
-}
-
-.love-card p {
-    font-size: 1.2rem;
-    margin-bottom: 20px;
+@keyframes fall {
+    to {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<div class="card">
+<div class="card" id="mainCard">
     <h1>Kaja, czy zostaniesz moją walentynką?</h1>
     <div class="hint">Spróbuj najpierw kliknąć „Nie” 😇</div>
 
@@ -140,6 +129,8 @@ const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
 const buttonsArea = document.getElementById("buttonsArea");
 
+let escapeLevel = 1; // im większy, tym szybciej ucieka 😈
+
 function moveNo() {
     const area = buttonsArea.getBoundingClientRect();
     const yes = yesBtn.getBoundingClientRect();
@@ -147,8 +138,11 @@ function moveNo() {
     let x, y, safe = false;
 
     while (!safe) {
-        x = Math.random() * (area.width - 120);
-        y = Math.random() * (area.height - 44);
+        const chaosX = 120 + escapeLevel * 20;
+        const chaosY = 50 + escapeLevel * 10;
+
+        x = Math.random() * Math.min(area.width - 120, chaosX);
+        y = Math.random() * Math.min(area.height - 44, chaosY);
 
         const noRect = {
             left: area.left + x,
@@ -157,7 +151,6 @@ function moveNo() {
             bottom: area.top + y + 44
         };
 
-        // strefa bezpieczeństwa wokół "Tak"
         safe =
             noRect.right < yes.left - 12 ||
             noRect.left > yes.right + 12 ||
@@ -167,30 +160,46 @@ function moveNo() {
 
     noBtn.style.left = x + "px";
     noBtn.style.top = y + "px";
+
+    escapeLevel++; // przyspieszamy 😏
 }
 
 noBtn.addEventListener("touchstart", moveNo);
 noBtn.addEventListener("mouseover", moveNo);
 
-// subtelne poruszenie "Nie" na start
-setTimeout(() => {
-    moveNo();
-}, 1200);
+// startowe poruszenie
+setTimeout(moveNo, 1200);
 
 function yesClick() {
-    if (navigator.vibrate) {
-        navigator.vibrate(80);
+    if (navigator.vibrate) navigator.vibrate(100);
+
+    document.getElementById("mainCard").style.opacity = "0";
+
+    // 🎉 konfetti z serc
+    for (let i = 0; i < 40; i++) {
+        createConfetti();
     }
 
-    document.body.innerHTML = `
-        <div class="fullscreen-love">
-            <div class="love-card">
-                <h2>Yay! 💕</h2>
-                <p>Wiedziałem 😘</p>
+    setTimeout(() => {
+        document.body.innerHTML = `
+            <div class="card">
+                <h1>Yay! 💕</h1>
+                <p style="font-size:1.2rem;">Wiedziałem 😘</p>
                 <div style="font-size:52px;">💖💖💖</div>
             </div>
-        </div>
-    `;
+        `;
+    }, 1200);
+}
+
+function createConfetti() {
+    const confetti = document.createElement("div");
+    confetti.classList.add("confetti");
+    confetti.textContent = Math.random() > 0.5 ? "💖" : "💕";
+    confetti.style.left = Math.random() * 100 + "vw";
+    confetti.style.animationDuration = 2 + Math.random() * 2 + "s";
+    document.body.appendChild(confetti);
+
+    setTimeout(() => confetti.remove(), 4000);
 }
 </script>
 
